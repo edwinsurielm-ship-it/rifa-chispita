@@ -121,18 +121,6 @@ Cachorra Pomerania de 2 meses y medio<br>
   actualizarContador();
 
   // Tómbola
-  function tombola() {
-    function modoAdmin() {
-  let clave = prompt("Contraseña de administrador:");
-
-  if (clave !== "CHISPITAS2026") {
-    alert("Acceso denegado ❌");
-    return;
-  }
-
-  girarTombola();
-}
-
 function girarTombola() {
   if (vendidos.length === 0) {
     alert("No hay boletos vendidos todavía.");
@@ -159,3 +147,4 @@ function girarTombola() {
 
 </body>
 </html>
+
