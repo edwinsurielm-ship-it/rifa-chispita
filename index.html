@@ -25,16 +25,16 @@
       display: grid;
       grid-template-columns: repeat(10, 1fr);
       gap: 8px;
-      max-width: 500px;
+      max-width: 600px;
       margin: auto;
     }
 
     .numero {
-      padding: 12px;
+      padding: 10px;
       background: white;
-      border: 2px solid black;
+      border: 1px solid black;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 5px;
     }
 
     .vendido {
@@ -43,79 +43,93 @@
       text-decoration: line-through;
       cursor: not-allowed;
     }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+    }
   </style>
 </head>
 
 <body>
 
-  <h1>🎉 GRAN RIFA 🎉</h1>
-  <h2>📅 Fecha: 10 de Marzo</h2>
+<h1>🎉 Gran Rifa 🎉</h1>
 
-  <p class="contador" id="contador"></p>
+<p><b>Fecha:</b> 10 de marzo</p>
 
-  <p><b>Debe tener 70% de boletos vendidos o se aplazará un mes más.</b></p>
+<p>
+Debe tener 70% de boletos vendidos, de lo contrario se aplazará más la fecha.
+</p>
 
-  <h2>🏆 PREMIOS 🏆</h2>
-  <p>Cachorra Pomerania de 2 meses y medio</p>
-  <p><b>(Chispitas)</b></p>
+<h2>🏆 PREMIOS</h2>
+<p>
+Cachorra Pomerania de 2 meses y medio<br>
+<b>(Chispitas)</b>
+</p>
 
-  <h2>🎟️ Números disponibles</h2>
-  <div class="grid" id="numeros"></div>
+<div class="contador" id="contador"></div>
+
+<h2>🎟️ Números disponibles</h2>
+<div class="grid" id="numeros"></div>
+
+<button onclick="tombola()">🎡 Girar Tómbola</button>
+
+<h2 id="ganador"></h2>
 
 <script>
-/* PEGA AQUÍ TU LINK DE GOOGLE */
-const API_URL = "https://script.google.com/macros/s/AKfycbxHWulPX90Pvv7EgrrmDezX0PHSSkt_VQ0jlv_LD85e1fBQKZ-wIlPky8NdTzdvikG57w/exec";
+  let vendidos = [];
 
-/* Crear números */
-const contenedor = document.getElementById("numeros");
-
-let vendidos = [];
-
-/* Cargar vendidos desde Google Sheets */
-async function cargarVendidos() {
-  const res = await fetch(API_URL);
-  vendidos = await res.json();
-  mostrarNumeros();
-}
-
-function mostrarNumeros() {
-  contenedor.innerHTML = "";
+  // Crear números 1 al 100
+  const contenedor = document.getElementById("numeros");
 
   for (let i = 1; i <= 100; i++) {
-    const div = document.createElement("div");
-    div.textContent = i;
+    let div = document.createElement("div");
     div.className = "numero";
+    div.innerText = i;
 
-    if (vendidos.includes(String(i))) {
-      div.classList.add("vendido");
-    }
+    div.onclick = () => {
+      if (!vendidos.includes(i)) {
+        vendidos.push(i);
+        div.classList.add("vendido");
+      }
+    };
 
     contenedor.appendChild(div);
   }
-}
 
-/* CONTADOR */
-function iniciarContador() {
-  let fechaFinal = new Date("2026-03-10");
-
-  setInterval(() => {
+  // Contador al 10 de marzo
+  function actualizarContador() {
+    let fecha = new Date("2026-03-10");
     let hoy = new Date();
-    let diferencia = fechaFinal - hoy;
+
+    let diferencia = fecha - hoy;
 
     if (diferencia <= 0) {
-      document.getElementById("contador").innerHTML =
-        "⏳ Fecha alcanzada. Si no hay 70% vendidos, se aplaza un mes.";
+      document.getElementById("contador").innerText =
+        "⏳ Fecha alcanzada. Si no hay 70% vendidos se aplaza un mes.";
       return;
     }
 
     let dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
-    document.getElementById("contador").innerHTML =
-      "⏰ Faltan " + dias + " días para el sorteo";
-  }, 1000);
-}
+    document.getElementById("contador").innerText =
+      "⏳ Faltan " + dias + " días para el sorteo.";
+  }
 
-cargarVendidos();
-iniciarContador();
+  actualizarContador();
+
+  // Tómbola
+  function tombola() {
+    if (vendidos.length === 0) {
+      alert("No hay boletos vendidos todavía.");
+      return;
+    }
+
+    let ganador = vendidos[Math.floor(Math.random() * vendidos.length)];
+    document.getElementById("ganador").innerText =
+      "🎉 El número ganador es: " + ganador;
+  }
 </script>
 
 </body>
