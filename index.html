@@ -74,8 +74,9 @@ Cachorra Pomerania de 2 meses y medio<br>
 <h2>🎟️ Números disponibles</h2>
 <div class="grid" id="numeros"></div>
 
-<button onclick="modoAdmin()"
-  
+<button onclick=<button onclick="modoAdmin()">🔒 Admin (Solo yo)</button>
+<h2 id="ganador"></h2>"tombola()">🎡 Girar Tómbola</button>
+
 <h2 id="ganador"></h2>
 
 <script>
@@ -120,10 +121,12 @@ Cachorra Pomerania de 2 meses y medio<br>
   actualizarContador();
 
   // Tómbola
-  function modoAdmin() {
+  function tombola() {
+    function modoAdmin() {
   let clave = prompt("Contraseña de administrador:");
 
   if (clave !== "CHISPITAS2026") {
+    alert("Acceso denegado ❌");
     return;
   }
 
@@ -156,5 +159,3 @@ function girarTombola() {
 
 </body>
 </html>
-
-
