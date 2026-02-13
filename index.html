@@ -21,6 +21,7 @@ body{
 .num{
     padding:10px;
     border:1px solid black;
+    cursor:pointer;
 }
 
 .vendido{
@@ -33,6 +34,10 @@ body{
     color:white;
     font-weight:bold;
 }
+
+#adminPanel{
+    margin-bottom:20px;
+}
 </style>
 </head>
 
@@ -41,7 +46,7 @@ body{
 <h2>Tómbola</h2>
 
 <div id="adminPanel" style="display:none;">
-    <button onclick="girar()">🎯 Girar</button>
+    <button onclick="girar()">🎯 GIRAR TÓMBOLA</button>
 </div>
 
 <h3 id="resultado"></h3>
@@ -49,7 +54,9 @@ body{
 <div class="grid" id="numeros"></div>
 
 <script>
-const isAdmin = location.hash === "#admin";
+
+// Detecta si es celular o laptop automáticamente
+const isAdmin = !/Mobi|Android|iPhone/i.test(navigator.userAgent);
 
 if(isAdmin){
     document.getElementById("adminPanel").style.display="block";
@@ -68,6 +75,7 @@ for(let i=1;i<=100;i++){
     if(vendidos.includes(i)) d.classList.add("vendido");
     if(ganador == i) d.classList.add("ganador");
 
+    // SOLO ADMIN puede marcar vendidos
     if(isAdmin){
         d.onclick=()=>{
             if(vendidos.includes(i)){
@@ -78,6 +86,8 @@ for(let i=1;i<=100;i++){
             localStorage.setItem("vendidos",JSON.stringify(vendidos));
             location.reload();
         }
+    }else{
+        d.style.cursor="default";
     }
 
     cont.appendChild(d);
@@ -91,6 +101,11 @@ function girar(){
     const disponibles = [];
     for(let i=1;i<=100;i++){
         if(!vendidos.includes(i)) disponibles.push(i);
+    }
+
+    if(disponibles.length === 0){
+        alert("Todos los números están vendidos");
+        return;
     }
 
     const g = disponibles[Math.floor(Math.random()*disponibles.length)];
