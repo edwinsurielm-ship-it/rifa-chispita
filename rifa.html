@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gran Rifa Chispitas</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      color: #e67e22;
+    }
+
+    .contador {
+      font-size: 20px;
+      margin: 15px;
+      font-weight: bold;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    .numero {
+      padding: 12px;
+      background: white;
+      border: 2px solid black;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    .vendido {
+      background: gray;
+      color: white;
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🎉 GRAN RIFA 🎉</h1>
+  <h2>📅 Fecha: 10 de Marzo</h2>
+
+  <p class="contador" id="contador"></p>
+
+  <p><b>Debe tener 70% de boletos vendidos o se aplazará un mes más.</b></p>
+
+  <h2>🏆 PREMIOS 🏆</h2>
+  <p>Cachorra Pomerania de 2 meses y medio</p>
+  <p><b>(Chispitas)</b></p>
+
+  <h2>🎟️ Números disponibles</h2>
+  <div class="grid" id="numeros"></div>
+
+<script>
+/* PEGA AQUÍ TU LINK DE GOOGLE */
+const API_URL = "https://script.google.com/macros/s/AKfycbxHWulPX90Pvv7EgrrmDezX0PHSSkt_VQ0jlv_LD85e1fBQKZ-wIlPky8NdTzdvikG57w/exec";
+
+/* Crear números */
+const contenedor = document.getElementById("numeros");
+
+let vendidos = [];
+
+/* Cargar vendidos desde Google Sheets */
+async function cargarVendidos() {
+  const res = await fetch(API_URL);
+  vendidos = await res.json();
+  mostrarNumeros();
+}
+
+function mostrarNumeros() {
+  contenedor.innerHTML = "";
+
+  for (let i = 1; i <= 100; i++) {
+    const div = document.createElement("div");
+    div.textContent = i;
+    div.className = "numero";
+
+    if (vendidos.includes(String(i))) {
+      div.classList.add("vendido");
+    }
+
+    contenedor.appendChild(div);
+  }
+}
+
+/* CONTADOR */
+function iniciarContador() {
+  let fechaFinal = new Date("2026-03-10");
+
+  setInterval(() => {
+    let hoy = new Date();
+    let diferencia = fechaFinal - hoy;
+
+    if (diferencia <= 0) {
+      document.getElementById("contador").innerHTML =
+        "⏳ Fecha alcanzada. Si no hay 70% vendidos, se aplaza un mes.";
+      return;
+    }
+
+    let dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+    document.getElementById("contador").innerHTML =
+      "⏰ Faltan " + dias + " días para el sorteo";
+  }, 1000);
+}
+
+cargarVendidos();
+iniciarContador();
+</script>
+
+</body>
+</html>
