@@ -74,8 +74,8 @@ Cachorra Pomerania de 2 meses y medio<br>
 <h2>🎟️ Números disponibles</h2>
 <div class="grid" id="numeros"></div>
 
-<button onclick="tombola()">🎡 Girar Tómbola</button>
-
+<button onclick="modoAdmin()">🔒 Admin (Solo yo)</button>
+  
 <h2 id="ganador"></h2>
 
 <script>
@@ -120,7 +120,30 @@ Cachorra Pomerania de 2 meses y medio<br>
   actualizarContador();
 
   // Tómbola
-  function tombola() {
+  function modoAdmin() {
+  let clave = prompt("Contraseña de administrador:");
+
+  if (clave !== "CHISPITAS2026") {
+    alert("Acceso denegado ❌");
+    return;
+  }
+
+  girarTombola();
+}
+
+function girarTombola() {
+  if (vendidos.length === 0) {
+    alert("No hay boletos vendidos todavía.");
+    return;
+  }
+
+  let ganador = vendidos[Math.floor(Math.random() * vendidos.length)];
+
+  document.getElementById("ganador").innerText =
+    "🎉 GANADOR OFICIAL: Número " + ganador;
+
+  alert("Ganador seleccionado: " + ganador);
+}
     if (vendidos.length === 0) {
       alert("No hay boletos vendidos todavía.");
       return;
@@ -134,3 +157,4 @@ Cachorra Pomerania de 2 meses y medio<br>
 
 </body>
 </html>
+
