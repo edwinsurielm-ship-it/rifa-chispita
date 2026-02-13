@@ -40,12 +40,6 @@ h1 { color: #e67e22; }
   text-decoration: line-through;
 }
 
-.ganador {
-  background: green;
-  color: white;
-  font-weight: bold;
-}
-
 button {
   margin-top: 20px;
   padding: 10px 20px;
@@ -76,57 +70,34 @@ Cachorra Pomerania de 2 meses y medio<br>
 <div class="grid" id="numeros"></div>
 
 <div id="adminPanel" style="display:none;">
-  <button onclick="girar()">🎰 Girar Tómbola</button>
+<button onclick="girarTombola()">🎰 Girar Tómbola</button>
 </div>
 
 <h2 id="ganador"></h2>
 
 <script>
 
-// Detectar si es laptop (admin) o celular (cliente)
+// Detectar si es celular
 const esAdmin = !/Mobi|Android|iPhone/i.test(navigator.userAgent);
 
-if(esAdmin){
-  document.getElementById("adminPanel").style.display="block";
+if (esAdmin) {
+  document.getElementById("adminPanel").style.display = "block";
 }
 
-// Datos guardados
+// Cargar datos guardados
 let vendidos = JSON.parse(localStorage.getItem("vendidos")) || [];
-let ganador = localStorage.getItem("ganador");
-
-// CONTADOR FECHA
-function actualizarContador() {
-  let fecha = new Date("2026-03-10");
-  let hoy = new Date();
-
-  let diferencia = fecha - hoy;
-
-  if (diferencia <= 0) {
-    document.getElementById("contador").innerText =
-      "⏳ Fecha alcanzada.";
-    return;
-  }
-
-  let dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
-  document.getElementById("contador").innerText =
-    "⏳ Faltan " + dias + " días para el sorteo.";
-}
-
-actualizarContador();
+let ganadorGuardado = localStorage.getItem("ganador");
 
 // Crear números
 const contenedor = document.getElementById("numeros");
 
 for (let i = 1; i <= 100; i++) {
-
   let div = document.createElement("div");
   div.className = "numero";
   div.innerText = i;
 
   if (vendidos.includes(i)) div.classList.add("vendido");
-  if (ganador == i) div.classList.add("ganador");
 
-  // Solo admin puede marcar vendidos
   if (esAdmin) {
     div.onclick = () => {
       if (vendidos.includes(i)) {
@@ -143,14 +114,26 @@ for (let i = 1; i <= 100; i++) {
 }
 
 // Mostrar ganador
-if (ganador) {
+if (ganadorGuardado) {
   document.getElementById("ganador").innerText =
-    "🎉 GANADOR OFICIAL: Número " + ganador;
+    "🎉 GANADOR OFICIAL: Número " + ganadorGuardado;
 }
 
-// Girar tómbola (solo admin)
-function girar() {
+// Contador
+function actualizarContador() {
+  let fecha = new Date("2026-03-10");
+  let hoy = new Date();
 
+  let dias = Math.floor((fecha - hoy) / (1000 * 60 * 60 * 24));
+
+  document.getElementById("contador").innerText =
+    "⏳ Faltan " + dias + " días para el sorteo.";
+}
+
+actualizarContador();
+
+// Girar tómbola
+function girarTombola() {
   const disponibles = [];
 
   for (let i = 1; i <= 100; i++) {
@@ -158,16 +141,17 @@ function girar() {
   }
 
   if (disponibles.length === 0) {
-    alert("Todos los boletos están vendidos");
+    alert("No hay números disponibles");
     return;
   }
 
-  const g = disponibles[Math.floor(Math.random() * disponibles.length)];
+  let ganador = disponibles[Math.floor(Math.random() * disponibles.length)];
 
-  localStorage.setItem("ganador", g);
+  localStorage.setItem("ganador", ganador);
 
   location.reload();
 }
+
 </script>
 
 </body>
