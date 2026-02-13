@@ -1,56 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Tómbola</title>
+
+<style>
+body{
+    font-family: Arial;
+    text-align:center;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(10,1fr);
+    gap:5px;
+    max-width:600px;
+    margin:auto;
+}
+
+.num{
+    padding:10px;
+    border:1px solid black;
+}
+
+.vendido{
+    background:red;
+    color:white;
+}
+
+.ganador{
+    background:green;
+    color:white;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Tómbola</h2>
+
+<div id="adminPanel" style="display:none;">
+    <button onclick="girar()">🎯 Girar</button>
+</div>
+
+<h3 id="resultado"></h3>
+
+<div class="grid" id="numeros"></div>
+
 <script>
-let vendidos = [];
-let esAdmin = false;
+const isAdmin = location.hash === "#admin";
 
-// Detectar celular
-if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
-  document.getElementById("btnAdmin").style.display = "none";
+if(isAdmin){
+    document.getElementById("adminPanel").style.display="block";
 }
 
-const contenedor = document.getElementById("numeros");
+let vendidos = JSON.parse(localStorage.getItem("vendidos")) || [];
+let ganador = localStorage.getItem("ganador");
 
-// Crear números
-for (let i = 1; i <= 100; i++) {
-  let div = document.createElement("div");
-  div.className = "numero";
-  div.innerText = i;
+const cont = document.getElementById("numeros");
 
-  div.onclick = () => {
-    if (!esAdmin) return;
+for(let i=1;i<=100;i++){
+    const d = document.createElement("div");
+    d.className="num";
+    d.innerText=i;
 
-    if (!vendidos.includes(i)) {
-      vendidos.push(i);
-      div.classList.add("vendido");
+    if(vendidos.includes(i)) d.classList.add("vendido");
+    if(ganador == i) d.classList.add("ganador");
+
+    if(isAdmin){
+        d.onclick=()=>{
+            if(vendidos.includes(i)){
+                vendidos = vendidos.filter(n=>n!=i);
+            }else{
+                vendidos.push(i);
+            }
+            localStorage.setItem("vendidos",JSON.stringify(vendidos));
+            location.reload();
+        }
     }
-  };
 
-  contenedor.appendChild(div);
+    cont.appendChild(d);
 }
 
-// Admin
-function modoAdmin() {
-  let pass = prompt("Clave admin:");
-
-  if (pass === "rifa123") {
-    esAdmin = true;
-    document.getElementById("btnGirar").style.display = "inline-block";
-  } else {
-    alert("Clave incorrecta");
-  }
+if(ganador){
+    document.getElementById("resultado").innerText="GANADOR: "+ganador;
 }
 
-// Girar
-function girarTombola() {
-  if (!esAdmin) return;
+function girar(){
+    const disponibles = [];
+    for(let i=1;i<=100;i++){
+        if(!vendidos.includes(i)) disponibles.push(i);
+    }
 
-  let ganador = vendidos[Math.floor(Math.random() * vendidos.length)];
-
-  document.getElementById("ganador").innerText =
-    "🎉 GANADOR OFICIAL: Número " + ganador;
+    const g = disponibles[Math.floor(Math.random()*disponibles.length)];
+    localStorage.setItem("ganador",g);
+    location.reload();
 }
 </script>
 
-
-
-
-
+</body>
+</html>
