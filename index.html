@@ -59,9 +59,8 @@ button { margin-top: 20px; padding: 10px 20px; font-size: 18px; }
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore, doc, onSnapshot, updateDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, doc, onSnapshot, updateDoc } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCevrXOgOd7pwRKbb6z9cBMkArhkZRxxnU",
@@ -82,20 +81,29 @@ if (esAdmin) document.getElementById("adminPanel").style.display = "block";
 const contenedor = document.getElementById("numeros");
 
 let vendidos = [];
+let ganador = null;
 
-// 🔥 ESCUCHAR SOLO NUMEROS VENDIDOS
 onSnapshot(ref, (docu) => {
   const data = docu.data();
+
   vendidos = data.vendidos || [];
+  ganador = data.ganador || null;
+
   dibujar();
+
+  // MOSTRAR GANADOR EN TODOS
+  if (ganador) {
+    document.getElementById("ganador").innerText =
+      "🎉 GANADOR: Número " + ganador;
+  } else {
+    document.getElementById("ganador").innerText = "";
+  }
 });
 
-// 🔥 DIBUJAR NUMEROS
 function dibujar() {
   contenedor.innerHTML = "";
 
   for (let i = 1; i <= 100; i++) {
-
     const div = document.createElement("div");
     div.className = "numero";
     div.innerText = i;
@@ -104,7 +112,6 @@ function dibujar() {
 
     if (esAdmin) {
       div.onclick = async () => {
-
         if (vendidos.includes(i))
           vendidos = vendidos.filter(n => n != i);
         else
@@ -118,8 +125,7 @@ function dibujar() {
   }
 }
 
-// 🎰 GIRAR TÓMBOLA (SOLO VISUAL)
-window.girarTombola = () => {
+window.girarTombola = async () => {
 
   const todos = [];
 
@@ -129,11 +135,15 @@ window.girarTombola = () => {
 
   const g = todos[Math.floor(Math.random() * todos.length)];
 
-  document.getElementById("ganador").innerText =
-    "🎉 GANADOR: Número " + g;
+  // 🔥 GUARDA GANADOR EN FIREBASE
+  await updateDoc(ref, { ganador: g });
+
+  // 🔥 BORRAR AUTOMATICAMENTE AL REFRESCAR
+  setTimeout(async () => {
+    await updateDoc(ref, { ganador: null });
+  }, 8000);
 };
 
-// CONTADOR
 function actualizarContador() {
   let fecha = new Date("2026-03-10");
   let hoy = new Date();
