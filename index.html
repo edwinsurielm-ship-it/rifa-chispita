@@ -122,11 +122,6 @@ function dibujar() {
     contenedor.appendChild(div);
   }
 
-  if (ganador)
-    document.getElementById("ganador").innerText =
-      "🎉 GANADOR: Número " + ganador;
-}
-
 // GIRAR TOMBOLA
 window.girarTombola = async () => {
 
@@ -138,8 +133,9 @@ window.girarTombola = async () => {
 
   const g = todos[Math.floor(Math.random() * todos.length)];
 
-  await updateDoc(ref, { ganador: g });
-
+  document.getElementById("ganador").innerText =
+"🎉 GANADOR: Número " + g;
+  
 };
 
 // CONTADOR
@@ -155,4 +151,5 @@ actualizarContador();
 </script>
 </body>
 </html>
+
 
