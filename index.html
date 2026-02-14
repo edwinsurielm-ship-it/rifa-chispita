@@ -83,23 +83,14 @@ const contenedor = document.getElementById("numeros");
 
 let vendidos = [];
 
+// 🔥 ESCUCHAR SOLO NUMEROS VENDIDOS
 onSnapshot(ref, (docu) => {
-
   const data = docu.data();
-
   vendidos = data.vendidos || [];
-
-  // 👇 MOSTRAR GANADOR EN TODOS LOS DISPOSITIVOS
-  if (data.ganador) {
-    document.getElementById("ganador").innerText =
-      "🎉 GANADOR: Número " + data.ganador;
-  } else {
-    document.getElementById("ganador").innerText = "";
-  }
-
   dibujar();
 });
 
+// 🔥 DIBUJAR NUMEROS
 function dibujar() {
   contenedor.innerHTML = "";
 
@@ -127,7 +118,8 @@ function dibujar() {
   }
 }
 
-window.girarTombola = async () => {
+// 🎰 GIRAR TÓMBOLA (SOLO VISUAL)
+window.girarTombola = () => {
 
   const todos = [];
 
@@ -137,19 +129,16 @@ window.girarTombola = async () => {
 
   const g = todos[Math.floor(Math.random() * todos.length)];
 
-  // 👇 GUARDAR EN FIREBASE PARA QUE TODOS LO VEAN
-  await updateDoc(ref, { ganador: g });
-
-  // 👇 BORRAR AUTOMATICAMENTE A LOS 8 SEGUNDOS
-  setTimeout(async () => {
-    await updateDoc(ref, { ganador: null });
-  }, 8000);
+  document.getElementById("ganador").innerText =
+    "🎉 GANADOR: Número " + g;
 };
 
+// CONTADOR
 function actualizarContador() {
   let fecha = new Date("2026-03-10");
   let hoy = new Date();
   let dias = Math.floor((fecha - hoy) / (1000 * 60 * 60 * 24));
+
   document.getElementById("contador").innerText =
     "⏳ Faltan " + dias + " días.";
 }
