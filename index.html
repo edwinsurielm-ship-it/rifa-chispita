@@ -64,7 +64,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCevrXOgOd7pwRKbb6z9cBMkArhkZRxxnU",
+  apiKey: "AIzaSyC...",
   authDomain: "rifa-chispitas.firebaseapp.com",
   projectId: "rifa-chispitas",
   storageBucket: "rifa-chispitas.firebasestorage.app",
@@ -76,7 +76,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const ref = doc(db, "rifa", "datos");
 
-// detectar admin (solo PC)
 const esAdmin = !/Mobi|Android|iPhone/i.test(navigator.userAgent);
 if (esAdmin) document.getElementById("adminPanel").style.display = "block";
 
@@ -84,14 +83,14 @@ const contenedor = document.getElementById("numeros");
 
 let vendidos = [];
 
-// 🔥 ESCUCHAR FIREBASE EN TIEMPO REAL
+// 🔥 ESCUCHAR FIREBASE
 onSnapshot(ref, (docu) => {
   const data = docu.data();
   vendidos = data.vendidos || [];
   dibujar();
 });
 
-// 🔥 DIBUJAR NUMEROS
+// 🔥 DIBUJAR
 function dibujar() {
   contenedor.innerHTML = "";
 
@@ -117,7 +116,17 @@ function dibujar() {
   }
 }
 
-// 🔥 GIRAR TÓMBOLA (NO SE GUARDA)
+// 🔥 MOSTRAR GANADOR TEMPORAL
+function mostrarGanador() {
+  const g = sessionStorage.getItem("ganador");
+
+  if (g) {
+    document.getElementById("ganador").innerText =
+      "🎉 GANADOR: Número " + g;
+  }
+}
+
+// 🔥 GIRAR TÓMBOLA (TEMPORAL)
 window.girarTombola = () => {
 
   const todos = [];
@@ -128,8 +137,9 @@ window.girarTombola = () => {
 
   const g = todos[Math.floor(Math.random() * todos.length)];
 
-  document.getElementById("ganador").innerText =
-    "🎉 GANADOR: Número " + g;
+  sessionStorage.setItem("ganador", g);
+
+  mostrarGanador();
 };
 
 // 🔥 CONTADOR
@@ -143,6 +153,7 @@ function actualizarContador() {
 }
 
 actualizarContador();
+mostrarGanador();
 
 </script>
 </body>
