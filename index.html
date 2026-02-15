@@ -82,7 +82,11 @@ const contenedor = document.getElementById("numeros");
 
 let vendidos = [];
 let ganador = null;
-
+  
+  async function limpiarGanadorAlEntrar() {
+  if (esAdmin) {
+    await updateDoc(ref, { ganador: null });
+    
 onSnapshot(ref, (docu) => {
   const data = docu.data();
 
@@ -157,5 +161,6 @@ actualizarContador();
 </script>
 </body>
 </html>
+
 
 
