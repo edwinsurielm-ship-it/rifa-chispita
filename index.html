@@ -83,7 +83,7 @@ const contenedor = document.getElementById("numeros");
 let vendidos = [];
 let ganador = null;
 
-onSnapshot(ref, async (docu) => {
+onSnapshot(ref, (docu) => {
   const data = docu.data();
 
   vendidos = data.vendidos || [];
@@ -94,12 +94,6 @@ onSnapshot(ref, async (docu) => {
   if (ganador) {
     document.getElementById("ganador").innerText =
       "🎉 GANADOR: Número " + ganador;
-
-    // 🔥 BORRAR AUTOMATICO AL CARGAR / REFRESCAR
-    if (esAdmin) {
-      await updateDoc(ref, { ganador: null });
-    }
-
   } else {
     document.getElementById("ganador").innerText = "";
   }
@@ -163,4 +157,5 @@ actualizarContador();
 </script>
 </body>
 </html>
+
 
