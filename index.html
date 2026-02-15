@@ -81,17 +81,14 @@ if (esAdmin) document.getElementById("adminPanel").style.display = "block";
 const contenedor = document.getElementById("numeros");
 
 let vendidos = [];
-let ganador = null;
-  
-  async function limpiarGanadorAlEntrar() {
-  if (esAdmin) {
-    await updateDoc(ref, { ganador: null });
-    
+
+
+// 🔥 ESCUCHAR FIREBASE
 onSnapshot(ref, (docu) => {
   const data = docu.data();
 
   vendidos = data.vendidos || [];
-  ganador = data.ganador || null;
+  const ganador = data.ganador || null;
 
   dibujar();
 
@@ -103,6 +100,8 @@ onSnapshot(ref, (docu) => {
   }
 });
 
+
+// 🔥 DIBUJAR NUMEROS
 function dibujar() {
   contenedor.innerHTML = "";
 
@@ -128,25 +127,28 @@ function dibujar() {
   }
 }
 
+
+// 🔥 GIRAR TÓMBOLA
 window.girarTombola = async () => {
 
   const todos = [];
-
-  for (let i = 1; i <= 100; i++) {
-    todos.push(i);
-  }
+  for (let i = 1; i <= 100; i++) todos.push(i);
 
   const g = todos[Math.floor(Math.random() * todos.length)];
 
-  // 🔥 GUARDA GANADOR EN FIREBASE
   await updateDoc(ref, { ganador: g });
-
-  // 🔥 BORRAR AUTOMATICAMENTE AL REFRESCAR
-  setTimeout(async () => {
-    await updateDoc(ref, { ganador: null });
-  }, 8000);
 };
 
+
+// 🔥 BORRAR GANADOR SOLO CUANDO EL ADMIN REFRESCA
+if (esAdmin) {
+  window.addEventListener("beforeunload", async () => {
+    await updateDoc(ref, { ganador: null });
+  });
+}
+
+
+// 🔥 CONTADOR
 function actualizarContador() {
   let fecha = new Date("2026-03-10");
   let hoy = new Date();
@@ -161,6 +163,3 @@ actualizarContador();
 </script>
 </body>
 </html>
-
-
-
